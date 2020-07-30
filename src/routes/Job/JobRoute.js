@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const bodyParser = require('body-parser');
 const jobCtrl = require('./JobController');
+const { permit } = require('../../middlewares/permission');
 
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
@@ -8,7 +9,7 @@ router.use(bodyParser.json());
 /**
  * Create Job
  */
-router.post('/create', async (req, res) => {
+router.post('/create', permit('employer'), async (req, res) => {
   try {
     const { _id: userId } = req.user;
 
@@ -24,7 +25,7 @@ router.post('/create', async (req, res) => {
 /**
  * Get Job list
  */
-router.get('/list', async (req, res) => {
+router.get('/list', permit('candidate'), async (req, res) => {
   try {
     const { _id: userId } = req.user;
 
@@ -40,7 +41,7 @@ router.get('/list', async (req, res) => {
 /**
  * Apply to a Job
  */
-router.post('/apply', async (req, res) => {
+router.post('/apply', permit('candidate'), async (req, res) => {
   try {
     const { jobId } = req.body;
     const { _id: userId } = req.user;
@@ -56,7 +57,7 @@ router.post('/apply', async (req, res) => {
 /**
  * Reject a Job
  */
-router.post('/reject', async (req, res) => {
+router.post('/reject', permit('candidate'), async (req, res) => {
   try {
     const { jobId } = req.body;
     const { _id: userId } = req.user;
@@ -73,7 +74,7 @@ router.post('/reject', async (req, res) => {
 /**
  * Reject a Job
  */
-router.post('/reject/remove', async (req, res) => {
+router.post('/reject/remove', permit('candidate'), async (req, res) => {
   try {
     const { jobId } = req.body;
     const { _id: userId } = req.user;

@@ -27,6 +27,8 @@ const UserSchema = new Schema({
   role: {
     type: String,
     enum: ['employer', 'candidate'],
+    default: 'candidate',
+    required: true,
   },
   company: {
     type: Schema.Types.ObjectId,
