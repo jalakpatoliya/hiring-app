@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 
 mongoose.connect(
-  `mongodb://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@ds249372.mlab.com:49372/hiring-app`,
+  `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0-wiof7.mongodb.net/<dbname>?retryWrites=true&w=majority`,
   { useNewUrlParser: true, useUnifiedTopology: true },
   (err, data) => {
     if (err) {

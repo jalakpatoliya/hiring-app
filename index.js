@@ -9,6 +9,19 @@ const PORT = process.env.PORT || 5000;
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
 /**
+ * connecting to db
+ */
+require('./src/lib/mongoose');
+
+/**
+ * importing models
+ */
+require('./src/models/User');
+require('./src/models/Company');
+require('./src/models/Job');
+require('./src/models/Profile');
+
+/**
  * Importing app
  */
 const app = require('./src/app');
@@ -24,16 +37,6 @@ if (process.env.NODE_ENV === 'production') {
 app.get('/service-worker.js', (req, res) => {
   res.sendFile(path.resolve(__dirname, '..', 'build', 'service-worker.js'));
 });
-
-/**
- * connecting to db
- */
-require('./src/lib/mongoose');
-
-/**
- * importing models
- */
-require('./src/models/User');
 
 // eslint-disable-next-line no-console
 http.createServer(app).listen(PORT, console.log(`server started at port:${PORT}`));

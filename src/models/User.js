@@ -9,6 +9,16 @@ const UserSchema = new Schema({
     type: String,
     required: true,
     unique: true,
+    validate: {
+      validator: (email) => {
+        if (email) {
+          const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+          return re.test(String(email).toLowerCase());
+        }
+        return true;
+      },
+      message: 'Provided email is invalid.',
+    },
   },
   password: {
     type: String,
@@ -16,8 +26,15 @@ const UserSchema = new Schema({
   },
   role: {
     type: String,
-    enum: ['admin', 'user'],
-    default: 'user',
+    enum: ['employer', 'candidate'],
+  },
+  company: {
+    type: Schema.Types.ObjectId,
+    ref: 'Company',
+  },
+  profile: {
+    type: Schema.Types.ObjectId,
+    ref: 'Profile',
   },
 });
 
@@ -44,6 +61,6 @@ UserSchema.methods.isValidPassword = async function (password) {
   const compare = await bcrypt.compare(password, user.password);
   return compare;
 };
-const UserModel = mongoose.model('user', UserSchema);
+const UserModel = mongoose.model('User', UserSchema);
 
 module.exports = UserModel;
