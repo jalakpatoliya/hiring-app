@@ -1,46 +1,34 @@
 import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import { CurrentUserContext } from '../../contexts/current-user.context';
 import { withRouter } from 'react-router';
 import Header from '../../pages/header/header.comopnent';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    '& > *': {
-      margin: theme.spacing(1),
-      width: '25ch',
-    },
-  },
-}));
+import DropDown from '../form-components/drop-down.component';
+import InputText from '../form-components/input-text.component';
+import LoginGridPaper from '../form-components/login-grid-paper.component';
+import { useForm } from 'react-hook-form';
 
 const SignUp = ({ history }) => {
-  const classes = useStyles();
-  const [currentUser, setCurrentUser] = useContext(CurrentUserContext);
-  const [email, setName] = useState('');
-  const [password, setPassword] = useState('');
+  const { register, handleSubmit, errors } = useForm();
 
-  const updateEmail = (e) => {
-    setName(e.target.value);
+  const [userCredentials, setUserCredentials] = useState({
+    email: '',
+    password: '',
+    role: '',
+  });
+  const { email, password, role } = userCredentials;
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setUserCredentials({ ...userCredentials, [name]: value });
   };
 
-  const updatePassword = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const onSubmit = async () => {
     try {
       //signUp
       await axios.post(`api/signup`, { email, password });
-
       alert('SignUp successfull, pls login');
-
       //moving to login page
       history.push('/login');
     } catch (error) {
@@ -51,53 +39,53 @@ const SignUp = ({ history }) => {
   return (
     <div>
       <Header />
-      <Grid
-        container
-        spacing={10}
-        direction="row"
-        alignItems="center"
-        justify="center"
-        style={{ minHeight: '100vh' }}
-      >
-        <Paper
-          elevation={3}
-          style={{
-            width: 250,
-            padding: 20,
-          }}
-        >
-          <br />
-          <br />
-          <form onSubmit={handleSubmit} className={classes.root} noValidate autoComplete="off">
-            <TextField
-              type="email"
-              onChange={updateEmail}
-              value={email}
-              id="outlined-basic"
-              placeholder="email"
-              variant="outlined"
-            />
-            <br />
-            <TextField
-              type="password"
-              onChange={updatePassword}
-              value={password}
-              id="outlined-basic"
-              placeholder="password"
-              variant="outlined"
-            />
-            <Button
-              size="large"
-              type="submit"
-              variant="contained"
-              style={{ color: 'white', backgroundColor: '#469ac6', padding: '15px 95px' }}
-              disableElevation
-            >
-              SignUp
-            </Button>
-          </form>
-        </Paper>
-      </Grid>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <LoginGridPaper>
+          <InputText
+            type="email"
+            name="email"
+            value={email}
+            onChange={handleChange}
+            label="Email"
+            required
+            variant="outlined"
+            ref={register({ required: true })}
+          />
+          <InputText
+            type="password"
+            name="password"
+            value={password}
+            onChange={handleChange}
+            label="Password"
+            required
+            variant="outlined"
+            ref={register({ required: true })}
+          />
+          <DropDown
+            menuValues={['candidate', 'employer']}
+            name="role"
+            value={role}
+            onChange={handleChange}
+            label="Role"
+            style={{ minWidth: 225 }}
+            required
+            ref={register({ required: true })}
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            style={{
+              minWidth: 200,
+              color: 'white',
+              backgroundColor: '#469ac6',
+              padding: '15px 95px',
+            }}
+            disableElevation
+          >
+            SignUp
+          </Button>
+        </LoginGridPaper>
+      </form>
     </div>
   );
 };

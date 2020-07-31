@@ -1,39 +1,31 @@
 import axios from 'axios';
 import React, { useContext, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import { CurrentUserContext } from '../../contexts/current-user.context';
 import { withRouter } from 'react-router';
 import Header from '../../pages/header/header.comopnent';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    '& > *': {
-      margin: theme.spacing(1),
-      width: '25ch',
-    },
-  },
-}));
+import InputText from '../form-components/input-text.component';
+import LoginGridPaper from '../form-components/login-grid-paper.component';
+import { useForm } from 'react-hook-form';
 
 const SignIn = ({ history }) => {
-  const classes = useStyles();
+  const { register, handleSubmit, errors } = useForm();
   const [currentUser, setCurrentUser] = useContext(CurrentUserContext);
-  const [email, setName] = useState('');
-  const [password, setPassword] = useState('');
 
-  const updateEmail = (e) => {
-    setName(e.target.value);
+  const [userCredentials, setUserCredentials] = useState({
+    email: '',
+    password: '',
+  });
+  const { email, password } = userCredentials;
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setUserCredentials({ ...userCredentials, [name]: value });
   };
 
-  const updatePassword = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async () => {
+    // e.preventDefault();
     try {
       //signing in
       const {
@@ -53,56 +45,43 @@ const SignIn = ({ history }) => {
   return (
     <div>
       <Header />
-
-      <Grid
-        container
-        spacing={10}
-        direction="row"
-        alignItems="center"
-        justify="center"
-        style={{ minHeight: '100vh' }}
-      >
-        <Paper
-          elevation={3}
-          style={{
-            width: 250,
-            padding: 20,
-          }}
-        >
-          <br />
-          <br />
-          <form onSubmit={handleSubmit} className={classes.root} noValidate autoComplete="off">
-            <TextField
-              required
-              type="email"
-              onChange={updateEmail}
-              value={email}
-              id="outlined-basic"
-              placeholder="email"
-              variant="outlined"
-            />
-            <br />
-            <TextField
-              required
-              type="password"
-              onChange={updatePassword}
-              value={password}
-              id="outlined-basic"
-              placeholder="password"
-              variant="outlined"
-            />
-            <Button
-              size="large"
-              type="submit"
-              variant="contained"
-              style={{ color: 'white', backgroundColor: '#469ac6', padding: '15px 95px' }}
-              disableElevation
-            >
-              SignIn
-            </Button>
-          </form>
-        </Paper>
-      </Grid>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <LoginGridPaper>
+          <InputText
+            type="email"
+            name="email"
+            value={email}
+            onChange={handleChange}
+            label="Email"
+            required
+            variant="outlined"
+            ref={register({ required: true })}
+          />
+          <InputText
+            type="password"
+            name="password"
+            value={password}
+            onChange={handleChange}
+            label="Password"
+            required
+            variant="outlined"
+            ref={register({ required: true })}
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            style={{
+              minWidth: 200,
+              color: 'white',
+              backgroundColor: '#469ac6',
+              padding: '15px 95px',
+            }}
+            disableElevation
+          >
+            SignIn
+          </Button>
+        </LoginGridPaper>
+      </form>
     </div>
   );
 };

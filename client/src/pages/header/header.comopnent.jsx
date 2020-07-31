@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -6,7 +6,8 @@ import { CurrentUserContext } from '../../contexts/current-user.context';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 import { withRouter } from 'react-router-dom';
 
-function Header({ history }) {
+function Header({ history, match }) {
+  let user = localStorage.getItem('user');
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [currentUser, setCurrentUser] = useContext(CurrentUserContext);
 
@@ -29,6 +30,26 @@ function Header({ history }) {
     history.push('/');
   };
 
+  // check if user is logged in or not
+  useEffect(() => {
+    try {
+      // if user exist in local storage retrieve it
+      const getUserFromLocalStorage = async () => {
+        if (user) {
+          user = JSON.parse(user);
+          //set current user in context
+          setCurrentUser(user);
+        } else if (match.url == '/signup' || match.url == '/login') {
+        } else {
+          history.push('/login');
+        }
+      };
+      getUserFromLocalStorage();
+    } catch (error) {
+      alert(error.message);
+    }
+  }, []);
+
   return (
     <div>
       <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
@@ -41,7 +62,7 @@ function Header({ history }) {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        {currentUser ? (
+        {user ? (
           <div>
             <MenuItem onClick={handleLogOut}>Logout</MenuItem>
             <MenuItem onClick={handleMenu}>Menu</MenuItem>
