@@ -5,6 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { CurrentUserContext } from '../../contexts/current-user.context';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 import { withRouter } from 'react-router-dom';
+import Snackbar from '../../components/form-components/snackbar.component';
 
 function Header({ history, match }) {
   let user = localStorage.getItem('user');
@@ -52,6 +53,7 @@ function Header({ history, match }) {
 
   return (
     <div>
+      <Snackbar />
       <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
         <AccountCircleRoundedIcon />
       </Button>

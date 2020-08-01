@@ -7,21 +7,16 @@ import DropDown from '../form-components/drop-down.component';
 import InputText from '../form-components/input-text.component';
 import LoginGridPaper from '../form-components/login-grid-paper.component';
 import { useForm } from 'react-hook-form';
-import SnackBar from '../form-components/snackbar.component';
+import { SnackBarContext } from '../../contexts/snackbar-context';
 
 const SignUp = ({ history }) => {
   const { register, handleSubmit, errors } = useForm();
 
+  const [snackbar, setSnackbar] = useContext(SnackBarContext);
   const [userCredentials, setUserCredentials] = useState({
     email: '',
     password: '',
     role: '',
-  });
-
-  const [snackBar, setSnackBar] = useState({
-    message: '',
-    open: false,
-    severity: 'info', //error,infor,success,warning
   });
 
   const { email, password, role } = userCredentials;
@@ -36,7 +31,12 @@ const SignUp = ({ history }) => {
     try {
       //signUp
       await axios.post(`api/signup`, { email, password });
-      alert('SignUp successfull, pls login');
+      setSnackbar({
+        ...snackbar,
+        open: true,
+        message: 'SignUp successfull, pls login',
+        severity: 'success',
+      });
       //moving to login page
       history.push('/login');
     } catch ({
@@ -46,8 +46,8 @@ const SignUp = ({ history }) => {
         },
       },
     }) {
-      setSnackBar({
-        ...snackBar,
+      setSnackbar({
+        ...snackbar,
         message: message ? message : 'Error',
         open: true,
         severity: 'error',
@@ -58,7 +58,7 @@ const SignUp = ({ history }) => {
   return (
     <div>
       <Header />
-      <SnackBar state={snackBar} setState={setSnackBar} />
+      {/* <SnackBar state={snackBar} setState={setSnackBar} /> */}
       <form onSubmit={handleSubmit(onSubmit)}>
         <LoginGridPaper>
           <InputText

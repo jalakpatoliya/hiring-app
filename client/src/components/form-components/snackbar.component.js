@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import { SnackBarContext } from '../../contexts/snackbar-context';
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function SnackBar({ state, setState, vertical = 'top', horizontal = 'center' }) {
-  const { message, open, severity } = state;
+export default function SnackBar() {
+  const [snackbar, setSnackbar] = useContext(SnackBarContext);
+  const { message, open, severity, vertical, horizontal } = snackbar;
 
   const handleClose = () => {
-    setState({ ...state, open: false });
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
