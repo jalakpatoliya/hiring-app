@@ -7,6 +7,7 @@ import DropDown from '../form-components/drop-down.component';
 import InputText from '../form-components/input-text.component';
 import LoginGridPaper from '../form-components/login-grid-paper.component';
 import { useForm } from 'react-hook-form';
+import SnackBar from '../form-components/snackbar.component';
 
 const SignUp = ({ history }) => {
   const { register, handleSubmit, errors } = useForm();
@@ -16,6 +17,13 @@ const SignUp = ({ history }) => {
     password: '',
     role: '',
   });
+
+  const [snackBar, setSnackBar] = useState({
+    message: '',
+    open: false,
+    severity: 'info', //error,infor,success,warning
+  });
+
   const { email, password, role } = userCredentials;
 
   const handleChange = (event) => {
@@ -31,14 +39,26 @@ const SignUp = ({ history }) => {
       alert('SignUp successfull, pls login');
       //moving to login page
       history.push('/login');
-    } catch (error) {
-      alert(error.message);
+    } catch ({
+      response: {
+        data: {
+          error: { message },
+        },
+      },
+    }) {
+      setSnackBar({
+        ...snackBar,
+        message: message ? message : 'Error',
+        open: true,
+        severity: 'error',
+      });
     }
   };
 
   return (
     <div>
       <Header />
+      <SnackBar state={snackBar} setState={setSnackBar} />
       <form onSubmit={handleSubmit(onSubmit)}>
         <LoginGridPaper>
           <InputText
